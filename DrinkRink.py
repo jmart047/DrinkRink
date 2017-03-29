@@ -19,13 +19,17 @@ def checkIngredient():
         print(resultrow)
     else:
         print("Sorry, thats not an ingredient")
-    dresult = c.execute("SELECT DTDRID FROM Detail WHERE INGID = ?", (resultrow,))
+   
+    for row in resultrow:
+        newresult = row
+        
+        dresult = c.execute("SELECT DTDRID FROM Detail WHERE INGID = ?", (newresult,))
+        dresult= c.fetchall()
+        if dresult is not None:
+            print(dresult)
+            for row in dresult:
+                lastresult = row
 
-    dresult= c.fetchone()
-
-    if dresult is not None:
-        print(dresult)
-    else:
-        print("Sorry, there are no drinks with that ingredient")
-
+            lresult = c.execute("SELECT DTDRID FROM Detail WHERE INGID = ?", (newresult,))
+            lresult= c.fetchone()
 checkIngredient()   
