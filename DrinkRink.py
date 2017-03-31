@@ -27,4 +27,9 @@ def checkIngredient():
         dresult= c.fetchall()
         if dresult is not None:
             print(dresult)
+            for row in dresult:
+                lastresult = row
+                lresult = c.execute("SELECT DRDESC FROM Drinks WHERE DRDRID = ?", (lastresult,))
+                lresult = c.fetchone()
+                print(lresult)
 checkIngredient()   
