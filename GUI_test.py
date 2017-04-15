@@ -21,28 +21,30 @@ def test():
         result =c.execute("SELECT ININID FROM Ingredients WHERE INDESC = ?", (ing,))
         resultrow = c.fetchone()
         if resultrow is not None:
-            print(resultrow)
-        else:
-            print("Sorry, thats not an ingredient")
-   
-        for row in resultrow:
-            newresult = row
+            for row in resultrow:
+                newresult = row
         
-            dresult = c.execute("SELECT DTDRID FROM Detail WHERE INGID = ?", (newresult,))
-            dresult= c.fetchall()
-          
-                    
-                
-
-        t2=Toplevel(t)
-        mess= Message(t2, text=dresult)
-        mess.pack()
+                dresult = c.execute("SELECT DTDRID FROM Detail WHERE INGID = ?", (newresult,))
+                dresult= c.fetchall()
+                t2=Toplevel(t)
+                mess= Message(t2, text=dresult)
+                mess.pack()
+        else:
+            terr=Toplevel(t)
+            errlabel=Label(terr,text="Not an Ingredient")
+            
+            
+            goback = Button(terr, text="Go Back", command=terr.destroy)
+            errlabel.pack()
+            goback.pack()
+            
+   
         
     button1= Button(t, text="Enter", command= getIng)
     label1.pack()
     e1.pack()
     button1.pack()
-    button = Button(t, text="Dismiss", command=top.destroy)
+    button = Button(t, text="Dismiss", command=t.destroy)
     button.pack()
 def test2():
     t=Toplevel()
@@ -56,11 +58,19 @@ def test2():
         ing1= e1.get()
         ing2= e2.get()
         ing3= e3.get()
-        testans = print("You Entered",ing1,",",ing2,",",ing3)
-        
+        res1 =c.execute("SELECT ININID FROM Ingredients WHERE INDESC = ?", (ing1,))
+        result1 = c.fetchone()
+
+        res2 =c.execute("SELECT ININID FROM Ingredients WHERE INDESC = ?", (ing2,))
+        result2 = c.fetchone()
+        res3 =c.execute("SELECT ININID FROM Ingredients WHERE INDESC = ?", (ing3,))
+        result3 = c.fetchone()
+##        final = c.execute("SELECT DTDRID FROM Detail WHERE INGID = ? OR ? OR ing3",(ing1,ing2,ing3,))
+##        finalresult = c.fetchall()
+        finalresult= result1 + result2 + result3
         
         t2=Toplevel(t)
-        messa = Message(t2, text= testans)
+        messa = Message(t2, text= finalresult)
         messa.pack()
     button1= Button(t, text="Enter", command= getAns)
     label1.pack()
