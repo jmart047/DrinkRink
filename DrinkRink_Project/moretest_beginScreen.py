@@ -21,7 +21,7 @@ def go():
     def test():
         #function for first button
         t2=Toplevel(t1)
-        t2.title("get ingredient")
+        t2.title("get ingredients")
         label1= Label(t2,text="enter ing")
         e1= Entry(t2, bd = 5)
         def getIng():
@@ -35,6 +35,7 @@ def go():
                     dresult = c.execute("SELECT DTDRID FROM Detail WHERE INGID = ?", (newresult,))
                     dresult= c.fetchall()
                     t3=Toplevel(t2)
+                    t3.title("get ingredients")
                     mess= Message(t3, text=dresult)
                     mess.pack()
                     leave=Button(t3, text="Go Back", command=t3.destroy)
@@ -60,6 +61,7 @@ def go():
     def test2():
         #function for second button
         t5=Toplevel(t1)
+        t5.title("MyBar")
         label1= Label(t5,text="enter ing")
         label2= Label(t5,text="enter ing")
         label3= Label(t5,text="enter ing")
@@ -98,6 +100,7 @@ def go():
     def drinklist():
         #function for third button
         t7=Toplevel(t1)
+        t7.title("Drink List")
         mylist=list()
         a = c.execute("SELECT DRDESC FROM Drinks ")
         resultset = c.fetchall()
