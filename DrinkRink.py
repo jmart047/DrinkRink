@@ -1,4 +1,5 @@
 #!usr/bin/env python3
+#DrinkRink
 
 import sqlite3
 import sys
@@ -43,12 +44,19 @@ def checkIngredient():
 
     resultset = c.fetchall()
 
+##    for result in resultset:
+##        if resultset != None:
+##            result = ' '.join(result)
+##            print(result)
+##        else:
+##            print("Sorry, there are no drinks with that ingredient")
+
     for result in resultset:
-        if resultset is not None:
+        if result == None:
+            print("Sorry, there are no drinks with that ingredient")
+        else:
             result = ' '.join(result)
             print(result)
-        else:
-            print("Sorry, there are no drinks with that ingredient")
 
 def checkMultipleIngredients():
     """This function displays all of the drinks that contain all of the ingredients the user entered.
@@ -67,6 +75,23 @@ def checkMultipleIngredients():
                       "(SELECT DTDRID FROM Detail WHERE INGID "
                       "=(SELECT INGID FROM Ingredients WHERE INDESC LIKE))", (ingredients,))
 
+def displayDrinkRecipe():
+    """This function displays the recipe of the drink the user enters"""
+
+    usrDrink = input("Enter the drink you would like the recipe for: \n")
+    query = c.execute("SELECT Ingredients.INDESC, Detail.QTY "
+                      "FROM Detail INNER JOIN Ingredients ON Detail.INGID=Ingredients.INGID "
+                      "WHERE DTDRID=(SELECT DRDRID FROM Drinks WHERE DRDESC LIKE ?)", (usrDrink,))
+
+    resultset = c.fetchall()
+
+    for result in resultset:
+        if resultset is not None:
+            result = ' '.join(result)
+            print(result)
+        else:
+            print("Sorry, that drink is not in the database.")
+
 def main():
 
     print("Welcome to DrinkRink!\n\n")
@@ -76,7 +101,8 @@ def main():
         "Press 2 to display all of the ingredients in the database.\n"
         "Press 3 to enter one ingredient and display all of the drinks with that ingredient.\n"
         "Press 4 to enter multiple ingredients and display all of the drinks that contain all of the ingredients you entered.\n"
-        "Press 5 to exit the DrinkRink.\n\n"))
+        "Press 5 to display the recipe of a particular drink.\n"
+        "Press 6 to exit DrinkRink.\n\n"))
 
         if usrInput == 1:
             print("\n")
@@ -91,6 +117,9 @@ def main():
             print("\n")
             checkMultipleIngredients()
         elif usrInput == 5:
+            print("\n")
+            displayDrinkRecipe()
+        elif usrInput == 6:
             sys.exit()
         else:
             print("\n You entered an invalid number!!!\n")
