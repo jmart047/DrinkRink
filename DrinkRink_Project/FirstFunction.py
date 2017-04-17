@@ -22,6 +22,12 @@ def test():
     t2.title("amm")
     label1= Label(t2,text="How many ingredients?")
     amm= Entry(t2)
+    myList=list()
+    def getList(x):
+        myList.append(x)
+        
+        
+        
     def getIng(x):
         result =c.execute("SELECT ININID FROM Ingredients WHERE INDESC = ?", (x,))
         resultrow = c.fetchone()
@@ -37,19 +43,19 @@ def test():
         t3.title("amm2")
         ammount=amm.get()
         num=int(ammount)
-        myList=list()
+        
         for i in range(1,num+1):
-            label=Label(t3,text="Enter Ingredient")
+            label=Label(t3,text="Enter Ingredients")
             label.pack()
             enter=Entry(t3)
             enter.pack()
             ing=enter.get()
-            myList.extend(ing)
-            print(myList)
             
-        getIt=Button(t3,text="Enter it",command= print(myList))
-        getIt.pack()
-             
+            
+            getIt=Button(t3,text="Get it",command= getList(ing))
+            getIt.pack()
+        returnIt=Button(t3,text="return",command=print(myList))
+        returnIt.pack()
         
     button1= Button(t2, text="Enter", command= loop)
     label1.pack()
