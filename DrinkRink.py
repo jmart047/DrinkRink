@@ -1,128 +1,137 @@
-#!usr/bin/env python3
-#DrinkRink
+#!/usr/bin/python3
+from tkinter import *
+
+from tkinter import messagebox
 
 import sqlite3
-import sys
 
-conn = sqlite3.connect('DrinkRink.sqlite')
+conn = sqlite3.connect('DrinkRink1.db')
 c = conn.cursor()
-
-
-def listDrinks():
-    """This function displays all of the drinks in the database"""
-    
-    query = c.execute("SELECT DRDESC FROM Drinks")
-
-    resultset = c.fetchall()
-    for result in resultset:
-        result = ' '.join(result)
-        print(result)
-
-def listIngredients():
-    """This function displays all of the ingredients the user can search for"""
-
-    query = c.execute("SELECT INDESC FROM Ingredients")
-
-    resultset = c.fetchall()
-    for result in resultset:
-        result = ' '.join(result)
-        print(result)
-            
-def checkIngredient():
-    """This function checks the database for the drinks that contain the ingredient the user entered
-
-    This function only checks for one ingredient
-    """
-    
-    usrIngredient = input("\nEnter an ingredient that you would like to make a drink with: \n\n")
-
-
-    query = c.execute("SELECT DRDESC FROM Drinks WHERE DRDRID IN"
-                      "(SELECT DTDRID FROM Detail WHERE INGID "
-                      "=(SELECT INGID FROM Ingredients WHERE INDESC LIKE ?))", (usrIngredient,))
-    
-
-    resultset = c.fetchall()
-
-##    for result in resultset:
-##        if resultset != None:
-##            result = ' '.join(result)
-##            print(result)
-##        else:
-##            print("Sorry, there are no drinks with that ingredient")
-
-    for result in resultset:
-        if result == None:
-            print("Sorry, there are no drinks with that ingredient")
-        else:
-            result = ' '.join(result)
-            print(result)
-
-def checkMultipleIngredients():
-    """This function displays all of the drinks that contain all of the ingredients the user entered.
-
-    This function is able to check for multiple ingredients.
-    """
-
-    ingredients = []
-    numberOfIngredients = int(input('Enter how many ingredients you would like to search for: '))
-    for i in range(0, numberOfIngredients):
-        x = input('Enter your ingredient: ')
-        ingredients.append(x)
-    print(ingredients)
-
-    query = c.execute("SELECT DRDESC FROM Drinks WHERE DRDRID IN"
-                      "(SELECT DTDRID FROM Detail WHERE INGID "
-                      "=(SELECT INGID FROM Ingredients WHERE INDESC LIKE))", (ingredients,))
-
-def displayDrinkRecipe():
-    """This function displays the recipe of the drink the user enters"""
-
-    usrDrink = input("Enter the drink you would like the recipe for: \n")
-    query = c.execute("SELECT Ingredients.INDESC, Detail.QTY "
-                      "FROM Detail INNER JOIN Ingredients ON Detail.INGID=Ingredients.INGID "
-                      "WHERE DTDRID=(SELECT DRDRID FROM Drinks WHERE DRDESC LIKE ?)", (usrDrink,))
-
-    resultset = c.fetchall()
-
-    for result in resultset:
-        if resultset is not None:
-            result = ' '.join(result)
-            print(result)
-        else:
-            print("Sorry, that drink is not in the database.")
-
-def main():
-
-    print("Welcome to DrinkRink!\n\n")
-    while (True):
+top = Tk()
+top.title("welcome")
+top.configure(background="#a1dbcd")
+photo = PhotoImage(file="dr_logo2.png")
+w = Label(top, image=photo)
+w.pack()
+def start():
+    #main screen
+    mainScreen=Toplevel(top)
+    mainScreen.title("Main Screen")
+    mainScreen.geometry("200x200")
+    def getDrink():
+        #user inputs ingredient, returns all drinks with that ingredient.
+        inputScreen=Toplevel(mainScreen)
+        inputScreen.title("Ingredients")
+        enterIng= Label(inputScreen,text="enter ingredient")
+        entry1= Entry(inputScreen, bd = 5)
+        def getIng():
+            #using user input to get data from sqlite database
+            ing= entry1.get()
+            result =c.execute("SELECT ININID FROM Ingredients WHERE INDESC = ?", (ing,))
+            resultrow = c.fetchone()
+            if resultrow is not None:
+                for row in resultrow:
+                    newresult = row
         
-        usrInput = eval(input("\nPress 1 to list all of the drinks in the database.\n"
-        "Press 2 to display all of the ingredients in the database.\n"
-        "Press 3 to enter one ingredient and display all of the drinks with that ingredient.\n"
-        "Press 4 to enter multiple ingredients and display all of the drinks that contain all of the ingredients you entered.\n"
-        "Press 5 to display the recipe of a particular drink.\n"
-        "Press 6 to exit DrinkRink.\n\n"))
-
-        if usrInput == 1:
-            print("\n")
-            listDrinks()
-        elif usrInput == 2:
-            print("\n")
-            listIngredients()
-        elif usrInput == 3:
-            print("\n")
-            checkIngredient()
-        elif usrInput == 4:
-            print("\n")
-            checkMultipleIngredients()
-        elif usrInput == 5:
-            print("\n")
-            displayDrinkRecipe()
-        elif usrInput == 6:
-            sys.exit()
-        else:
-            print("\n You entered an invalid number!!!\n")
+                    searchresult = c.execute("SELECT DTDRID FROM Detail WHERE INGID = ?", (newresult,))
+                    fetchresult= c.fetchall()
+                    answerScreen=Toplevel(inputScreen)
+                    answerScreen.title("Drinks")
+                    mess= Message(answerScreen, text=fetchresult)
+                    mess.pack()
+                    leave=Button(answerScreen, text="Go Back", command=answerScreen.destroy)
+                    leave.pack()
+            else:
+                errorScreen=Toplevel(inputScreen)
+                errlabel=Label(errorScreen,text="Not an Ingredient")
+                    
+                    
+                goback = Button(errorScreen, text="Go Back", command=errorScreen.destroy)
+                errlabel.pack()
+                goback.pack()
+            
+   
+        
+        getAnswer= Button(inputScreen, text="Enter", command= getIng)
+        enterIng.pack()
+        entry1.pack()
+        getAnswer.pack()
+        goBack = Button(inputScreen, text="Dismiss", command=inputScreen.destroy)
+        goBack.pack()
     
-if __name__ == "__main__":
-    main()
+    def myBar():
+        #user inputs multiple ingredients, returns the IDs. Work on returning drinks using multiple Ingredients
+        barScreen=Toplevel(mainScreen)
+        barScreen.title("MyBar")
+        enterIng1= Label(barScreen,text="enter ingredient")
+        enterIng2= Label(barScreen,text="enter ingredient")
+        enterIng3= Label(barScreen,text="enter ingredient")
+        entry1= Entry(barScreen, bd = 5)
+        entry2= Entry(barScreen, bd = 5)
+        entry3= Entry(barScreen, bd = 5)
+        def getmyBar():
+            #search database for Ingredient IDs
+            ing1= entry1.get()
+            ing2= entry2.get()
+            ing3= entry3.get()
+            res1 =c.execute("SELECT ININID FROM Ingredients WHERE INDESC = ?", (ing1,))
+            result1 = c.fetchone()
+            res2 =c.execute("SELECT ININID FROM Ingredients WHERE INDESC = ?", (ing2,))
+            result2 = c.fetchone()
+            res3 =c.execute("SELECT ININID FROM Ingredients WHERE INDESC = ?", (ing3,))
+            result3 = c.fetchone()
+##            final = c.execute("SELECT DTDRID FROM Detail WHERE INGID = ?",(result1,))
+##            finalresult = print(c.fetchall())
+            finalresult= result1 + result2 + result3
+            answerScreen=Toplevel(barScreen)
+            messa = Message(answerScreen, text= finalresult)
+            messa.pack()
+            leave=Button(answerScreen, text="Go Back", command=answerScreen.destroy)
+            leave.pack()
+        getAnswer= Button(barScreen, text="Enter", command= getmyBar)
+        goBack= Button(barScreen, text="Go Back", command= barScreen.destroy)
+        enterIng1.pack()
+        entry1.pack()
+        enterIng2.pack()
+        entry2.pack()
+        enterIng3.pack()
+        entry3.pack()
+        getAnswer.pack()
+        goBack.pack()
+
+    def drinklist():
+        #returns a list of all the drinks in database
+        dlScreen=Toplevel(mainScreen)
+        dlScreen.title("Drink List")
+        mylist=list()
+        showAll = c.execute("SELECT DRDESC FROM Drinks ")
+        resultset = c.fetchall()
+        for result in resultset:
+            mylist.extend(result)
+             
+        msg = Message(dlScreen, text=mylist)
+        msg.pack()
+        button = Button(dlScreen, text="Dismiss", command=dlScreen.destroy)
+        button.pack()
+    #main screen buttons    
+    one = Button(mainScreen, text = "Enter Ingredients", command = getDrink)
+    two = Button(mainScreen, text = "MyBar", command=myBar)
+    three = Button(mainScreen, text = "Full Drink List", command=drinklist)
+    four = Button(mainScreen, text = "Leave", command= mainScreen.destroy)
+    one.place(x=75,y=10)
+    two.place(x=75,y=60)
+    three.place(x=75,y=110)
+    four.place(x=75,y=160)
+    
+    
+   
+    
+
+#start screen buttons       
+start= Button(top, text="Enter Drinkrink",command=start)
+start.place(x=200,y=200)
+start.pack
+end= Button(top, text="Leave Drinkrink",command=top.destroy)
+end.place(x=350, y=200)
+top.mainloop()
+
