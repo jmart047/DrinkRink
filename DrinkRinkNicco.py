@@ -2,19 +2,12 @@
 # DrinkRink
 # Nicco Narbutas
 
-from tkinter import *
-from tkinter import messagebox
+##from tkinter import *
+##from tkinter import messagebox
 
 
 import sqlite3
 import sys
-
-top = Tk()
-top.title("welcome")
-top.configure(background = "#a1dbcd")
-photo = PhotoImage(file = "dr_logo2.gif")
-w = Label(top, image = photo)
-w.pack()
 
 
 conn = sqlite3.connect('DrinkRink.sqlite')   #connects SQLite database to program
@@ -109,47 +102,93 @@ def displayDrinkRecipe():
         else:
             print("Sorry, the drink you entered does not match any drinks in our database.")
 
+def displayDrinkRecipe_Ingredient():
+    """This function displays the recipe of a drink that contains the ingredient the user entered"""
 
-def mainScreenWindow():
-    mainScreen = Toplevel(top)
-    mainScreen.title("Main Screen")
-    mainScreen.geometry("200x200")
-    one = Button(mainScreen, text = "Enter Ingredients", command = checkIngredient)
-    one.place(x = 75, y = 10)
+    usrIngredient = input("Enter the ingredient you "
+                          "would like a recipe for: \n\n")   #prompts the user to enter an ingredient
+    
+    query = c.execute("SELECT Drinks.DRDESC, Ingredients.INDESC, Detail.QTY "
+                      "FROM Detail INNER JOIN Ingredients ON Detail.INGID=Ingredients.INGID INNER JOIN Drinks ON Detail.DTDRID=Drinks.DRDRID "
+                      "WHERE DTDRID=(SELECT INGID FROM Ingredients WHERE INDESC LIKE ?)", (usrIngredient,))
 
+    resultset = c.fetchall()
+
+    for result in resultset:  #prints results one row at a time
+        if resultset is not None:
+            result = ' '.join(result)
+            print("\n\t", result)
+        else:
+            print("Sorry, the drink you entered does not match any drinks in our database.")
+
+
+##def mainScreenWindow():
+##    mainScreen = Toplevel(top)
+##    mainScreen.title("Main Screen")
+##    mainScreen.geometry("200x200")
+##    one = Button(mainScreen, text = "Enter Ingredients", command = checkIngredient)
+##    one.place(x = 75, y = 10)
+##    three = Button(mainScreen, text = "Full Drink List", command = listDrinks)
+##    three.place(x = 75, y = 10)
+##    four = Button(mainScreen, text = "Leave", command = mainScreen.destroy)
+##    four.place(x = 75, y = 10)
+##    def inputScreenWindow():
+##        inputScreen = Toplevel(mainScreen)
+##        inputScreen.title("Ingredients")
+##        enterIng = Label(inputScreen, text = "Enter Ingredient")
+##        entry1 = Entry(inputScreen, bd = 5)
+##        
+##def startup():        
+##    top = Tk()
+##    top.title("welcome")
+##    top.configure(background = "#a1dbcd")
+##    photo = PhotoImage(file = "dr_logo2.gif")
+##    w = Label(top, image = photo)
+##    w.pack()
+##    start = Button(top, text = "Enter Drinkrink",command= mainScreenWindow)
+##    start.place(x = 200,y = 200)
+##    start.pack
+##    end = Button(top, text = "Leave Drinkrink",command = top.destroy)
+##    end.place(x = 350, y = 200)
+##    top.mainloop()
+    
 def main():
 
-    mainScreenWindow()
+##    startup()
     
-##    print("Welcome to DrinkRink!\n\n")
-##    while (True):  #displays the following message while the program is running
-##        
-##        usrInput = input("\nPress 1 to list all of the drinks in the database.\n"
-##        "Press 2 to display all of the ingredients in the database.\n"
-##        "Press 3 to enter one ingredient and display all of the drinks with that ingredient.\n"
-##        "Press 4 to enter multiple ingredients and display all of the drinks that contain all of the ingredients you entered.\n"
-##        "Press 5 to display the recipe of a particular drink.\n"
-##        "Press 6 to exit DrinkRink.\n\n")
-##
-##        if usrInput == "1":
-##            print("\n")
-##            listDrinks()
-##        elif usrInput == "2":
-##            print("\n")
-##            listIngredients()
-##        elif usrInput == "3":
-##            print("\n")
-##            checkIngredient()            #   <------------- buttons
-##        elif usrInput == "4":
-##            print("\n")
-##            checkMultipleIngredients()
-##        elif usrInput == "5":
-##            print("\n")
-##            displayDrinkRecipe()
-##        elif usrInput == "6":
-##            sys.exit()
-##        else:
-##            print("\n\tYou entered an invalid number!!!\n")
+    print("Welcome to DrinkRink!\n\n")
+    while (True):  #displays the following message while the program is running
+        
+        usrInput = input("\nPress 1 to list all of the drinks in the database.\n"
+        "Press 2 to display all of the ingredients in the database.\n"
+        "Press 3 to enter one ingredient and display all of the drinks with that ingredient.\n"
+        "Press 4 to enter multiple ingredients and display all of the drinks that contain all of the ingredients you entered.\n"
+        "Press 5 to display the recipe of a particular drink.\n"
+        "Press 6 to display a recipe of an ingredient that you have.\n"
+        "Press 7 to exit DrinkRink.\n\n")
+
+        if usrInput == "1":
+            print("\n")
+            listDrinks()
+        elif usrInput == "2":
+            print("\n")
+            listIngredients()
+        elif usrInput == "3":
+            print("\n")
+            checkIngredient()            #   <------------- buttons
+        elif usrInput == "4":
+            print("\n")
+            checkMultipleIngredients()
+        elif usrInput == "5":
+            print("\n")
+            displayDrinkRecipe()
+        elif usrInput == "6":
+            print("\n")
+            displayDrinkRecipe_Ingredient()
+        elif usrInput == "7":
+            sys.exit()
+        else:
+            print("\n\tYou entered an invalid number!!!\n")
     
 if __name__ == "__main__":
     main()
